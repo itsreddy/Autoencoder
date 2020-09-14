@@ -21,7 +21,7 @@ class CustomDataLoader():
         return dset
     
     def get_data_loader(self, train):
-        d_loader = DataLoader(dataset=load_data(train),
+        d_loader = DataLoader(dataset=self.load_data(train),
                           batch_size=self.args.batch_size,
                           shuffle=True)
         return d_loader
