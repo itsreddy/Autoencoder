@@ -1,3 +1,15 @@
+# Project specific ignores
+/data
+*.png
+/content/drive/My Drive/UC Davis Synthetic Data/Prashanth's/Autoencoder/github.ipynb
+*github*
+/outs
+
+
+
+
+# STANDARD PYTHON GITIGNORE:
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
