@@ -39,6 +39,8 @@ class SavePath():
                             .replace(" ", "-").replace(":", "-")
             self.results_path = self.args.base_path + \
                                     "outs/{}/".format(timeasname)
+        
+        print(self.results_path)
 
     def get_save_paths(self, make_directories = True):
 
