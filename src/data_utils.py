@@ -1,7 +1,7 @@
 from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
 from torchvision.transforms import transforms
-import time
+import time, os
 
 class CustomDataLoader():
     
@@ -9,7 +9,7 @@ class CustomDataLoader():
         self.args = args
 
     def load_data(self, train):
-        path = self.args.base_path + './data/'
+        path = self.args.base_path + 'data/'
         if train:
             dset = MNIST(root=path,
                         train=True,
