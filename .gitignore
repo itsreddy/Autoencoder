@@ -1,10 +1,9 @@
 # Project specific ignores
 /data
 *.png
-/content/drive/My Drive/UC Davis Synthetic Data/Prashanth's/Autoencoder/github.ipynb
 *github*
 /outs
-
+wae.ipynb
 
 
 
