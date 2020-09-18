@@ -30,10 +30,10 @@ class CustomDataLoader():
 
 class SavePath():
 
-    def __init__(self, args, results_path=None):
+    def __init__(self, args, checkpoint_path=None):
         self.args = args
-        if results_path:
-            self.results_path = results_path
+        if checkpoint_path:
+            self.results_path = checkpoint_path
         else: 
             timeasname = time.asctime(time.localtime(time.time()))\
                             .replace(" ", "-").replace(":", "-")
@@ -42,7 +42,7 @@ class SavePath():
         
         print(self.results_path)
 
-    def get_save_paths(self, make_directories = True):
+    def get_save_paths(self, make_directories=True):
 
         image_path = self.results_path + "images/"
         list_path = self.results_path +  "lists/"
