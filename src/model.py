@@ -24,7 +24,10 @@ class AutoEncoderGAN:
             checkpoint: int epoch (to load models)
             load_path: SavePath object to get file paths
 
-        TO-DO: Implement a method to generate random images from latent space 
+        TO-DO: 
+            Enable a logging interface like tensorboardX
+            Implement a method to generate random images from latent space 
+            Implement a method to print/save model architectures
         """
         
         self.reconstr_loss_epoch = []
@@ -38,9 +41,9 @@ class AutoEncoderGAN:
         self.decoder = Decoder(self.args)
         self.discriminator = Discriminator(self.args)
 
-        encoder.train()
-        decoder.train()
-        discriminator.train()
+        self.encoder.train()
+        self.decoder.train()
+        self.discriminator.train()
 
         if cuda:
             self.encoder = self.encoder.cuda()
@@ -48,7 +51,7 @@ class AutoEncoderGAN:
             self.discriminator = self.discriminator.cuda()
         
         if checkpoint:
-            
+            self.checkpoint = checkpoint
             if load_path:
                 _, list_path, model_path = load_path.get_save_paths()
             else:
@@ -86,7 +89,7 @@ class AutoEncoderGAN:
     
     def save_models(self, model_path, epoch_no):
                         
-        print("Saving model")
+        print("Saving models")
         torch.save(self.encoder.state_dict(), 
                             model_path + "/encoder_{}.pth".format(epoch_no))
         torch.save(self.decoder.state_dict(), 
@@ -99,20 +102,25 @@ class AutoEncoderGAN:
         np.savetxt(list_path + '/reconstr_loss_{}.txt'.format(epoch_no), 
                                                     self.reconstr_loss_epoch)
 
-    def save_images(self, image, image_path, epoch_no):
-        print("Saving image")    
-        save_image(image, image_path +
-                                '/inputs_reconstr_{}.png'.format(epoch + 1))
+    def save_images(self, recimage, sampimage, image_path, epoch_no):
+        print("Saving images")    
+        save_image(recimage, image_path +
+                                '/inputs_reconstr_{}.png'.format(epoch_no))
+        
+        save_image(sampimage, image_path + 
+                                '/sample_{}.png'.format(epoch_no))
     
     def train(self, out_frequency, save_model_frequency, save_paths): 
-        
+
+        chkpt = self.checkpoint if self.checkpoint else 0
+
         reconstr_loss = []
         image_path, list_path, model_path = save_paths.get_save_paths()
 
         one = torch.tensor(1)
         mone = one * -1
 
-        for epoch in range(self.args.n_epochs):
+        for epoch in range(chkpt, chkpt+self.args.n_epochs):
             for step, (images, _) in tq(enumerate(self.train_loader)):
                 
                 reconstr_loss.clear() 
@@ -184,14 +192,13 @@ class AutoEncoderGAN:
                 test_data = next(test_iter)
 
                 z_real = self.encoder(Variable(test_data[0]).cuda())
-                reconst = self.decoder(torch.randn_like(z_real)).cpu().view(
+                reconst = decoder(z_real).cpu().view(batch_size, 1, 28, 28)
+                sampimage = self.decoder(torch.randn_like(z_real)).cpu().view(
                                                         batch_size, 1, 28, 28)
+                recimage = torch.cat((test_data[0].view(batch_size, 1, 28, 28), 
+                                        reconst.data), axis=3)
 
-                image = np.concatenate(
-                                (test_data[0].view(batch_size, 1, 28, 28), 
-                                reconst.data), axis=1)
-
-                self.save_images(image, image_path, epoch+1)
+                self.save_images(recimage, sampimage, image_path, epoch+1)
 
                 # save_image(test_data[0].view(batch_size, 1, 28, 28),
                 #                 image_path + '/input_{}.png'.format(epoch+1))
