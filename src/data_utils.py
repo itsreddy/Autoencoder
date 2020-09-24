@@ -3,7 +3,7 @@ from torchvision.datasets import MNIST
 from torchvision.transforms import transforms
 import time, os
 
-class CustomDataLoader():
+class LoadDataset():
     
     def __init__(self, args):
         self.args = args
@@ -22,7 +22,7 @@ class CustomDataLoader():
                         download=True)
         return dset
     
-    def get_data_loader(self, train):
+    def get_data_loader(self, train: bool):
         d_loader = DataLoader(dataset=self.load_data(train),
                           batch_size=self.args.batch_size,
                           shuffle=True)
