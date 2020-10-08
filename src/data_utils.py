@@ -1,25 +1,41 @@
 from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST
+from torchvision.datasets import MNIST, CIFAR10
 from torchvision.transforms import transforms
 import time, os
 
 class LoadDataset():
     
-    def __init__(self, args):
+    def __init__(self, args, data: str, transform=None):
         self.args = args
+        self.transform = transform
+        self.data = data
 
     def load_data(self, train):
         path = self.args.base_path + 'data/'
-        if train:
-            dset = MNIST(root=path,
-                        train=True,
-                        transform=transforms.ToTensor(),
-                        download=True)
-        else:
-            dset = MNIST(root=path,
-                        train=False,
-                        transform=transforms.ToTensor(),
-                        download=True)
+        if self.transform is None:
+            self.transform = transforms.ToTensor()
+        if self.data == 'mnist':
+            if train:
+                dset = MNIST(root=path,
+                            train=True,
+                            transform=self.transform,
+                            download=True)
+            else:
+                dset = MNIST(root=path,
+                            train=False,
+                            transform=self.transform,
+                            download=True)
+        if self.data == 'cifar':
+            if train:
+                dset = CIFAR10(root=path,
+                            train=True,
+                            transform=self.transform,
+                            download=True)
+            else:
+                dset = CIFAR10(root=path,
+                            train=False,
+                            transform=self.transform,
+                            download=True)
         return dset
     
     def get_data_loader(self, train: bool):
