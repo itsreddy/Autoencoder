@@ -1,15 +1,20 @@
-
 # implement a multimodal trainer which takes encoders, decoders and discriminator as inputs
 # let rest of the auxiliary functions be in utils
+from collections import defaultdict
+
+from src.models.utils import save_models, save_model_architectures
+from src.dataset.utils import SavePath
 
 
 class ModelTrainer:
 
-    def __init__(self, args, cuda, criterion, data, encoders, decoders, discriminator, optimizers):
+    def __init__(self, args, save_paths: SavePath, cuda, criterion, data, encoders, decoders, discriminator, optimizers,
+                 tensorboard_logger):
 
         """
         Object to contain modular training related code
         :param args: TrainConfig
+        :param save_paths: SavePath object
         :param cuda: bool
         :param criterion: loss function
         :param data:
@@ -17,6 +22,7 @@ class ModelTrainer:
         :param decoders:
         :param discriminator:
         :param optimizers:
+        :param tensorboard_logger:
 
         TODO:
             1. Optimizer code
@@ -27,6 +33,7 @@ class ModelTrainer:
         """
 
         self.args = args
+        self.save_paths = save_paths
         self.criterion = criterion
         self.train_loader = data.get_data_loader(train=True)
         self.test_loader = data.get_data_loader(train=False)
@@ -34,8 +41,8 @@ class ModelTrainer:
         self.decoders = decoders
         self.discriminator = discriminator
         self.optimizers = optimizers
+        self.tensorboard_logger = tensorboard_logger
         self.cuda = cuda
-
         self.set_models_to_train()
 
     def set_models_to_train(self):
@@ -45,9 +52,17 @@ class ModelTrainer:
             self.decoders[i].train()
         self.discriminator.train()
 
+    def run(self, output_frequency: int, save_model_frequency: int, save_paths: SavePath):
+        """
+        run training
+        :param output_frequency:
+        :param save_model_frequency:
+        :param save_paths:
+        :return:
+        """
 
-
-
+        image_path, list_path, model_path = save_paths.get_save_paths()
+        values_to_log = defaultdict(list)
 
 
 class AutoEncoderGAN:
