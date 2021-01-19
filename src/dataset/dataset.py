@@ -42,6 +42,10 @@ class Cifar:
         dataset = self.load_data(train)
 
         if load_specific_classes:
+            '''
+            for some reason, the labels are not getting selected properly, but the images are getting selected from
+            the specified classes
+            '''
             x = lambda i: True if i in set(load_specific_classes) else False
             idx = [x(i) for i in dataset.targets]
             dataset.data = dataset.data[idx]
