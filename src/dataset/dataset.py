@@ -38,12 +38,13 @@ class Cifar:
         self.base_path = args.base_path
         self.batch_size = args.batch_size
 
-    def get_data_loader(self, train=True, load_specific_classes=None):
+    def get_data_loader(self, train=True, transform=None, load_specific_classes=None):
+        if transform:
+            self.transform = transform
         dataset = self.load_data(train)
-
         if load_specific_classes:
             '''
-            for some reason, the labels are not getting selected properly, but the images are getting selected from
+            TODO: for some reason, the labels are not getting selected properly, but the images are getting selected from
             the specified classes
             '''
             x = lambda i: True if i in set(load_specific_classes) else False
