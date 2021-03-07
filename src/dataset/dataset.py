@@ -1,20 +1,30 @@
 from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST, CIFAR10
+from torchvision.datasets import MNIST, CIFAR10, LSUN
 from torchvision.transforms import transforms
 
-
-class Mnist:
-
+class Dataset:
+    
     def __init__(self, args):
         self.transform = transforms.ToTensor()
         self.base_path = args.base_path
         self.batch_size = args.batch_size
-
-    def get_data_loader(self, train=True):
+    
+    def get_data_loader(self, train):
         d_loader = DataLoader(dataset=self.load_data(train),
                               batch_size=self.batch_size,
                               shuffle=True)
-        return d_loader
+    def load_data():
+        pass
+
+class Mnist(Dataset):
+
+    def __init__(self, args):
+        super().__init__(args)
+        
+    def get_data_loader(self, train):
+        d_loader = DataLoader(dataset=self.load_data(train),
+                              batch_size=self.batch_size,
+                              shuffle=True)
 
     def load_data(self, train):
         path = self.base_path + 'data/'
@@ -31,12 +41,10 @@ class Mnist:
         return dset
 
 
-class Cifar:
+class Cifar(Dataset):
 
     def __init__(self, args):
-        self.transform = transforms.ToTensor()
-        self.base_path = args.base_path
-        self.batch_size = args.batch_size
+        super().__init__(args)
 
     def get_data_loader(self, train=True, transform=None, load_specific_classes=None):
         if transform:
@@ -68,4 +76,26 @@ class Cifar:
                            train=train,
                            transform=self.transform,
                            download=True)
+        return dset
+
+class Lsun(Dataset):
+
+    def __init__(self, args):
+        super().__init__(args)
+    
+    def get_data_loader(self, train, class_list):
+        d_loader = DataLoader(dataset=self.load_data(train, class_list),
+                              batch_size=self.batch_size,
+                              shuffle=True)
+
+    def load_data(self, train, class_list):
+        path = self.base_path + 'data/'
+        if train:
+            dset = LSUN(root=path,
+                         classes=class_list,
+                         transform=self.transform)
+        else:
+            dset = LSUN(root=path,
+                         classes=class_list,
+                         transform=self.transform)
         return dset

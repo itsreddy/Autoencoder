@@ -27,7 +27,10 @@ class Encoder(nn.Module):
             nn.ReLU(True),
         )
 
-        self.fc = nn.Linear(self.dim_h, self.n_z)
+        self.fc = nn.Sequential(
+            nn.Linear(self.dim_h, self.n_z)#,
+#             nn.Tanh()
+        )
 
     def forward(self, x):
         x = self.main(x)
