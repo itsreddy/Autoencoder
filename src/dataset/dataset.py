@@ -25,6 +25,7 @@ class Mnist(Dataset):
         d_loader = DataLoader(dataset=self.load_data(train),
                               batch_size=self.batch_size,
                               shuffle=True)
+        return d_loader
 
     def load_data(self, train):
         path = self.base_path + 'data/'
